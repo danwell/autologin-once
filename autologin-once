@@ -1,0 +1,20 @@
+#!/bin/sh
+
+if [ $# != 2 ]
+then
+    echo "Usage: $0 USER TTY" >&2
+    exit 1
+fi
+
+USER=$1
+TTY=$2
+LOCKFILE=/tmp/autologin-once.$USER.lock
+
+if [ -f $LOCKFILE ]
+then
+    exec /sbin/agetty --noclear $TTY
+else
+    echo "Automatically logging in $USER on $TTY"
+    touch $LOCKFILE
+    exec /sbin/agetty --autologin $USER --noclear $TTY
+fi
